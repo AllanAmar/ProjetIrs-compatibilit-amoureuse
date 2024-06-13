@@ -1,24 +1,25 @@
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 
 # Questions et options
 questions = [
-    "Quel est votre type de film préféré ?",
-    "Quelle est votre saison préférée ?",
-    "Quel est votre plat préféré ?",
-    "Quel est votre passe-temps préféré ?"
+    "Quel est ton type de film préféré ?",
+    "Quelle est ton saison préférée ?",
+    "Quel est ton plat préféré ?",
+    "Quel est ton passe-temps préféré ?"
 ]
 
 options = [
-    ["Action", "Comédie", "Drame", "Science-fiction"],
+    ["Action", "Comédie", "Drame", "Science-fiction", "Amour", "Romance", "Horreur" , "PEGI -18"],
     ["Printemps", "Été", "Automne", "Hiver"],
-    ["Pizza", "Sushi", "Pâtes", "Salade"],
-    ["Lecture", "Sport", "Voyage", "Musique"]
+    ["Pizza", "Sushi", "Pâtes", "Salade", "Burgers","Entrecôtes+Frites","ChiliChiken"],
+    ["Lecture", "Sport", "Voyage", "Musique"],
 ]
 
 pays = [
     "France", "Belgique", "Suisse", "Canada", "États-Unis", "Allemagne", "Espagne",
-    "Italie", "Royaume-Uni", "Australie", "Japon", "Chine", "Inde", "Brésil"
+    "Italie", "Royaume-Uni", "Australie", "Japon", "Chine", "Inde", "Brésil", "Martinique", "Maroc", "Sri-Lanka"
 ]
 
 class CompatibiliteApp:
@@ -41,20 +42,20 @@ class CompatibiliteApp:
         self.popup.title("Informations Personne 1")
         self.popup.configure(bg="#FFC0CB")
 
-        ttk.Label(self.popup, text="Nom:", background="#FFC0CB", foreground="#FF69B4").grid(row=0, column=0, padx=5, pady=5)
+        ttk.Label(self.popup, text="Nom:", background="#FFC0CB", foreground="red").grid(row=0, column=0, padx=5, pady=5)
         self.nom1 = ttk.Entry(self.popup)
         self.nom1.grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(self.popup, text="Date de Naissance:", background="#FFC0CB", foreground="#FF69B4").grid(row=1, column=0, padx=5, pady=5)
+        ttk.Label(self.popup, text="Date de Naissance:", background="#FFC0CB", foreground="red").grid(row=1, column=0, padx=5, pady=5)
         self.dob1 = ttk.Entry(self.popup)
         self.dob1.grid(row=1, column=1, padx=5, pady=5)
 
-        ttk.Label(self.popup, text="Pays:", background="#FFC0CB", foreground="#FF69B4").grid(row=2, column=0, padx=5, pady=5)
+        ttk.Label(self.popup, text="Pays:", background="#FFC0CB", foreground="red").grid(row=2, column=0, padx=5, pady=5)
         self.pays1 = ttk.Combobox(self.popup, values=pays, state="readonly")
         self.pays1.grid(row=2, column=1, padx=5, pady=5)
 
         for i, (question, opts) in enumerate(zip(questions, options)):
-            ttk.Label(self.popup, text=question, background="#FFC0CB", foreground="#FF69B4").grid(row=3+i, column=0, padx=5, pady=5)
+            ttk.Label(self.popup, text=f"{question}", background="#FFC0CB", foreground="red").grid(row=3+i, column=0, padx=5, pady=5)
             ans1 = ttk.Combobox(self.popup, values=opts, state="readonly")
             ans1.grid(row=3+i, column=1, padx=5, pady=5)
             self.answers1.append(ans1)
@@ -80,21 +81,21 @@ class CompatibiliteApp:
         self.popup.title("Informations Personne 2")
         self.popup.configure(bg="#FFC0CB")
 
-        ttk.Label(self.popup, text="Nom:", background="#FFC0CB", foreground="#FF69B4").grid(row=0, column=0, padx=5, pady=5)
+        ttk.Label(self.popup, text="Nom:", background="#FFC0CB", foreground="red").grid(row=0, column=0, padx=5, pady=5)
         self.nom2 = ttk.Entry(self.popup)
         self.nom2.grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(self.popup, text="Date de Naissance:", background="#FFC0CB", foreground="#FF69B4").grid(row=1, column=0, padx=5, pady=5)
+        ttk.Label(self.popup, text="Date de Naissance:", background="#FFC0CB", foreground="red").grid(row=1, column=0, padx=5, pady=5)
         self.dob2 = ttk.Entry(self.popup)
         self.dob2.grid(row=1, column=1, padx=5, pady=5)
 
-        ttk.Label(self.popup, text="Pays:", background="#FFC0CB", foreground="#FF69B4").grid(row=2, column=0, padx=5, pady=5)
+        ttk.Label(self.popup, text="Pays:", background="#FFC0CB", foreground="red").grid(row=2, column=0, padx=5, pady=5)
         self.pays2 = ttk.Combobox(self.popup, values=pays, state="readonly")
         self.pays2.grid(row=2, column=1, padx=5, pady=5)
 
         self.answers2 = []
         for i, (question, opts) in enumerate(zip(questions, options)):
-            ttk.Label(self.popup, text=question, background="#FFC0CB", foreground="#FF69B4").grid(row=3+i, column=0, padx=5, pady=5)
+            ttk.Label(self.popup, text=f"{question}", background="#FFC0CB", foreground="red").grid(row=3+i, column=0, padx=5, pady=5)
             ans2 = ttk.Combobox(self.popup, values=opts, state="readonly")
             ans2.grid(row=3+i, column=1, padx=5, pady=5)
             self.answers2.append(ans2)
@@ -109,6 +110,50 @@ class CompatibiliteApp:
             "answers": [ans.get() for ans in self.answers2]
         }
         self.popup.destroy()
+        self.show_payment_popup()
+
+    def show_payment_popup(self):
+        self.popup = tk.Toplevel()
+        self.popup.title("Paiement")
+        self.popup.configure(bg="#FFC0CB")
+
+        ttk.Label(self.popup, text="Veuillez payer 1.92€ pour envoyer votre réponse", background="#FFC0CB", foreground="red").grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+
+        ttk.Label(self.popup, text="Nom:", background="#FFC0CB", foreground="red").grid(row=1, column=0, padx=5, pady=5)
+        self.payment_nom = ttk.Entry(self.popup)
+        self.payment_nom.grid(row=1, column=1, padx=5, pady=5)
+
+        ttk.Label(self.popup, text="Prénom:", background="#FFC0CB", foreground="red").grid(row=2, column=0, padx=5, pady=5)
+        self.payment_prenom = ttk.Entry(self.popup)
+        self.payment_prenom.grid(row=2, column=1, padx=5, pady=5)
+
+        ttk.Label(self.popup, text="Numéro de carte:", background="#FFC0CB", foreground="red").grid(row=3, column=0, padx=5, pady=5)
+        self.payment_card_number = ttk.Entry(self.popup)
+        self.payment_card_number.grid(row=3, column=1, padx=5, pady=5)
+
+        ttk.Label(self.popup, text="Date expiration:", background="#FFC0CB", foreground="red").grid(row=4, column=0, padx=5, pady=5)
+        self.payment_expiration_date = ttk.Entry(self.popup)
+        self.payment_expiration_date.grid(row=4, column=1, padx=5, pady=5)
+
+        ttk.Label(self.popup, text="CDV:", background="#FFC0CB", foreground="red").grid(row=5, column=0, padx=5, pady=5)
+        self.payment_cdv = ttk.Entry(self.popup)
+        self.payment_cdv.grid(row=5, column=1, padx=5, pady=5)
+
+        ttk.Button(self.popup, text="Envoyer", command=self.process_payment).grid(row=6, column=0, columnspan=2, pady=20)
+
+    def process_payment(self):
+        # Simuler le traitement du paiement ici
+        payment_info = {
+            "nom": self.payment_nom.get(),
+            "prenom": self.payment_prenom.get(),
+            "card_number": self.payment_card_number.get(),
+            "expiration_date": self.payment_expiration_date.get(),
+            "cdv": self.payment_cdv.get()
+        }
+
+        # Afficher une confirmation et passer au calcul de compatibilité
+        messagebox.showinfo("Paiement réussi", "Votre paiement a été accepté.")
+        self.popup.destroy()
         self.calculate_compatibility()
 
     def calculate_compatibility(self):
@@ -122,9 +167,9 @@ class CompatibiliteApp:
         result_text = f"Votre score de compatibilité est de {compatibility_percentage:.2f}%\n\n"
 
         if compatibility_percentage > 50:
-            result_text += "C'est l'homme de ta vie"
+            result_text += "C'est la personne de ta vie chouchou ! "
         else:
-            result_text += "Trace ta route, t'es même pas compatible"
+            result_text += "Trace ta route, t'es même pas compatible zebi ! "
 
         messagebox.showinfo("Résultat", result_text)
         self.root.destroy()
