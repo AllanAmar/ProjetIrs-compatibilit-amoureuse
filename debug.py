@@ -1,6 +1,6 @@
-
 import tkinter as tk
 from tkinter import ttk, messagebox
+from PIL import Image, ImageTk
 
 # Questions et options
 questions = [
@@ -11,9 +11,9 @@ questions = [
 ]
 
 options = [
-    ["Action", "Comédie", "Drame", "Science-fiction", "Amour", "Romance", "Horreur" , "PEGI -18"],
+    ["Action", "Comédie", "Drame", "Science-fiction", "Amour", "Romance", "Horreur", "PEGI -18"],
     ["Printemps", "Été", "Automne", "Hiver"],
-    ["Pizza", "Sushi", "Pâtes", "Salade", "Burgers","Entrecôtes+Frites","ChiliChiken"],
+    ["Pizza", "Sushi", "Pâtes", "Salade", "Burgers", "Entrecôtes+Frites", "ChiliChiken"],
     ["Lecture", "Sport", "Voyage", "Musique"],
 ]
 
@@ -31,6 +31,41 @@ class CompatibiliteApp:
         self.answers1 = []
         self.answers2 = []
 
+        self.show_welcome_screen()
+
+    def show_welcome_screen(self):
+        self.welcome_popup = tk.Toplevel()
+        self.welcome_popup.title("Bienvenue")
+
+        # Charger l'image de fond et redimensionner
+        self.background_image = Image.open("cupidon.jpg")
+        # Convertir cm en pixels (1 cm = 37.7953 pixels environ)
+        width, height = int(16 * 37.7953), int(10 * 37.7953)
+        self.background_image = self.background_image.resize((width, height), Image.LANCZOS)
+        self.bg_image = ImageTk.PhotoImage(self.background_image)
+
+        # Créer un canevas pour afficher l'image de fond
+        self.canvas = tk.Canvas(self.welcome_popup, width=self.bg_image.width(), height=self.bg_image.height())
+        self.canvas.pack(fill="both", expand=True)
+        self.canvas.create_image(0, 0, image=self.bg_image, anchor="nw")
+
+        # Ajouter les widgets sur le canevas
+        self.title_text = tk.Label(self.welcome_popup, text="Découvrez votre âme-soeur pour 1.92€ seulement !", fg="red", font=("Helvetica", 18, "bold"), bg="#FFC0CB")
+        self.canvas.create_window(300, 20, window=self.title_text)
+        self.blink_text()  # Commencer le clignotement du texte
+
+        start_button = tk.Button(self.welcome_popup, text="💘 Démarrer le test de compatibilité 💘", font=("Helvetica", 10, "bold"), command=self.close_welcome_screen)
+        self.canvas.create_window(300, 340, window=start_button)
+        self.canvas.create_text(300, 365, text="By Allan AMAR, Giovanni PAPARELLA and Sarusan SIVATHASAN", fill="black", font=("Helvetica", 9, "bold"))
+
+    def blink_text(self):
+        current_color = self.title_text.cget("fg")
+        next_color = "red" if current_color == "white" else "white"
+        self.title_text.config(fg=next_color)
+        self.welcome_popup.after(300, self.blink_text)
+
+    def close_welcome_screen(self):
+        self.welcome_popup.destroy()
         self.show_initial_popup()
 
     def show_initial_popup(self):
@@ -63,6 +98,11 @@ class CompatibiliteApp:
         ttk.Button(self.popup, text="Suivant", command=self.save_person1_info).grid(row=3+len(questions), column=0, columnspan=2, pady=20)
 
     def save_person1_info(self):
+        # Vérification si tous les champs sont remplis
+        if not self.nom1.get() or not self.dob1.get() or not self.pays1.get() or any(not ans.get() for ans in self.answers1):
+            messagebox.showwarning("Attention", "Tous les champs doivent être remplis pour la 1ère personne.")
+            return
+
         self.person1_data = {
             "nom": self.nom1.get(),
             "dob": self.dob1.get(),
@@ -103,6 +143,11 @@ class CompatibiliteApp:
         ttk.Button(self.popup, text="Soumettre", command=self.save_person2_info).grid(row=3+len(questions), column=0, columnspan=2, pady=20)
 
     def save_person2_info(self):
+        # Vérification si tous les champs sont remplis
+        if not self.nom2.get() or not self.dob2.get() or not self.pays2.get() or any(not ans.get() for ans in self.answers2):
+            messagebox.showwarning("Attention", "Tous les champs doivent être remplis pour la 2ème personne.")
+            return
+
         self.person2_data = {
             "nom": self.nom2.get(),
             "dob": self.dob2.get(),
@@ -139,45 +184,37 @@ class CompatibiliteApp:
         self.payment_cdv = ttk.Entry(self.popup)
         self.payment_cdv.grid(row=5, column=1, padx=5, pady=5)
 
-        ttk.Button(self.popup, text="Envoyer", command=self.process_payment).grid(row=6, column=0, columnspan=2, pady=20)
+        ttk.Button(self.popup, text="Envoyer", command=self.confirm_payment).grid(row=6, column=0, columnspan=2, pady=20)
 
-    def process_payment(self):
-        # Simuler le traitement du paiement ici
-        payment_info = {
-            "nom": self.payment_nom.get(),
-            "prenom": self.payment_prenom.get(),
-            "card_number": self.payment_card_number.get(),
-            "expiration_date": self.payment_expiration_date.get(),
-            "cdv": self.payment_cdv.get()
-        }
+    def confirm_payment(self):
+        # Vérification si tous les champs sont remplis
+        if not self.payment_nom.get() or not self.payment_prenom.get() or not self.payment_card_number.get() or not self.payment_expiration_date.get() or not self.payment_cdv.get():
+            messagebox.showwarning("Attention", "Tous les champs de paiement doivent être remplis.")
+            return
 
-        # Afficher une confirmation et passer au calcul de compatibilité
-        messagebox.showinfo("Paiement réussi", "Votre paiement a été accepté.")
+        response = messagebox.askquestion("Confirmation", "Voulez-vous vraiment payer 1.92€ ?", icon='warning')
+        if response == 'yes':
+            self.show_results()
+        else:
+            messagebox.showinfo("Information", "C'est soit tu payes soit ta pas ton résultat")
+
+    def show_results(self):
         self.popup.destroy()
-        self.calculate_compatibility()
+        compatibilite = self.calculate_compatibility()
+        self.popup = tk.Toplevel()
+        self.popup.title("Résultats de Compatibilité")
+        self.popup.configure(bg="#FFC0CB")
+
+        result_text = f"Compatibilité entre {self.person1_data['nom']} et {self.person2_data['nom']} : {compatibilite}%"
+        ttk.Label(self.popup, text=result_text, background="#FFC0CB", foreground="red", font=("Helvetica", 14)).pack(pady=20)
+        ttk.Button(self.popup, text="Fermer", command=self.popup.destroy).pack(pady=20)
 
     def calculate_compatibility(self):
-        score = 0
-        total_questions = len(questions)
-        for ans1, ans2 in zip(self.person1_data['answers'], self.person2_data['answers']):
-            if ans1 == ans2:
-                score += 1
+        matches = sum(1 for a1, a2 in zip(self.person1_data["answers"], self.person2_data["answers"]) if a1 == a2)
+        total_questions = len(self.person1_data["answers"])
+        return (matches / total_questions) * 100
 
-        compatibility_percentage = (score / total_questions) * 100
-        result_text = f"Votre score de compatibilité est de {compatibility_percentage:.2f}%\n\n"
-
-        if compatibility_percentage > 50:
-            result_text += "C'est la personne de ta vie chouchou ! "
-        else:
-            result_text += "Trace ta route, t'es même pas compatible zebi ! "
-
-        messagebox.showinfo("Résultat", result_text)
-        self.root.destroy()
-
-def main():
+if __name__ == "__main__":
     root = tk.Tk()
     app = CompatibiliteApp(root)
     root.mainloop()
-
-if __name__ == "__main__":
-    main()
